@@ -17,7 +17,7 @@
       <v-btn
         color="primary lighten-2"
         text
-        @click="reserve"
+        @click="showMovieDetails(movie.imdbID)"
       >
         Details
       </v-btn>
@@ -38,6 +38,17 @@ export default {
     return {
       show: false,
     }
+  },
+
+  methods: {
+    showMovieDetails(id) {
+      this.$router.push({
+        name: 'Movie',
+        params: {
+          id,
+        },
+      });
+    },
   },
 }
 </script>

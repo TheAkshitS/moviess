@@ -11,10 +11,11 @@
           <v-select
             v-model="searchBy"
             :items="searchByItems"
-            :item-text="text"
-            :item-value="value"
+            item-text="text"
+            item-value="value"
             outlined
             label="Search by"
+            @change="resetSearch"
           />
         </v-flex>
         <v-flex xs6>
@@ -23,6 +24,8 @@
             outlined
             label="Search"
             append-icon="mdi-magnify"
+            :loading="isLoading"
+            @input="searchMovies"
           />
         </v-flex>
       </v-layout>
@@ -39,24 +42,45 @@ export default {
   data() {
     return {
       searchBy: 's',
-      searchTerm: 'star',
+      searchTerm: '',
       searchByItems: [
         { text: 'IMDB ID', value: 'i' },
         { text: 'Title', value: 's' },
       ],
-    }
-  },
 
-  created() {
-    this.searchMovies()
+      isLoading: false,
+    }
   },
 
   methods: {
     async searchMovies() {
-      const response = await MovieService.getMovies(
-        `${this.searchBy}=${this.searchTerm}`,
-      )
-      this.$emit('search-movies', response.data.Search)
+      // debounce
+      if (this.timeout) clearTimeout(this.timeout)
+
+      this.timeout = setTimeout(async () => {
+        this.isLoading = true
+
+        const response = await MovieService.getMovies(
+          `${this.searchBy}=${this.searchTerm}`,
+        )
+
+        if (response.data.Response === 'False') {
+          this.isLoading = false
+          return this.$emit('search-movies', [])
+        }
+
+        const movies =
+          this.searchBy === 's' ? response.data.Search : [response.data]
+
+        this.$emit('search-movies', movies)
+
+        this.isLoading = false
+      }, 350)
+    },
+
+    resetSearch() {
+      this.searchTerm = ''
+      this.$emit('search-movies', [])
     },
   },
 }
