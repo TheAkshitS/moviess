@@ -1,0 +1,43 @@
+<template>
+  <v-card class="mx-auto" max-width="500">
+    <v-img
+      :src="movie.Poster"
+      height="300px"
+    />
+    <v-card-title>
+      {{ movie.Title }}
+    </v-card-title>
+
+    <v-card-subtitle>
+      {{ movie.Year }}
+    </v-card-subtitle>
+
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        color="primary lighten-2"
+        text
+        @click="reserve"
+      >
+        Details
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+
+<script>
+export default {
+  props: {
+    movie: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      show: false,
+    }
+  },
+}
+</script>
